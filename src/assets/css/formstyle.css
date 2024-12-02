@@ -1,0 +1,88 @@
+
+ion-title {
+  font-weight: bold;
+  text-align: center;
+  color: #006FAE;
+}
+
+.container {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  margin: 20px auto;
+  max-width: 400px;
+  margin-bottom: 100px;
+}
+
+.illustration {
+  display: block;
+  margin: 0 auto 25px;
+  width: 100%;
+  height: auto;
+}
+
+.custom-item {
+  margin-top: 6px;
+  --border-radius: 8px;
+  --background: #fff;
+  --border-width: 1.5px;
+  --border-color: #ccc;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --inner-padding: 8px;
+  margin-bottom: 16px;
+}
+
+ion-input {
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --background: transparent;
+  font-size: 14px;
+}
+
+ion-label {
+  font-size: 16px;
+  margin-bottom: 8px;
+  margin-top: 4px;
+  color: #333;
+}
+
+.button {
+  --background: #006FAE;
+  --border-radius: 20px;
+  color: white;
+  font-weight: bold;
+  margin-top: 20px;
+  width: 50%;
+  margin: 20px auto 20px auto;
+  text-transform: none;
+}
+
+.register-link {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 14px;
+  color: #666;
+}
+
+.register-link a {
+  color: #006FAE;
+  text-decoration: none;
+  font-weight: bold;
+  margin-left: 4px;
+}
+
+.register-link a:hover {
+  text-decoration: underline;
+}
+
+.password-toggle-icon {
+  font-size: 20px; /* Ukuran ikon */
+  color: #4caf50; /* Ganti dengan warna yang kontras, misalnya hijau */
+  cursor: pointer; /* Menambahkan ikon interaktif */
+}
+
+.password-toggle-icon:hover {
+  color: #388e3c; /* Warna saat hover */
+}

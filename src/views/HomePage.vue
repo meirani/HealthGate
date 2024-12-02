@@ -1,56 +1,109 @@
 <template>
   <ion-page>
-    <ion-header :translucent="true">
+    <ion-header>
       <ion-toolbar>
-        <ion-title>Blank</ion-title>
+        <ion-title>
+          <img src="@/assets/logo.png" alt="HealthGate Logo" style="height: 40px; vertical-align: middle;">
+          HealthGate
+        </ion-title>
       </ion-toolbar>
     </ion-header>
+    <ion-content>
+      <!-- Banner -->
+      <ion-img src="https://via.placeholder.com/500x200" alt="Banner"></ion-img>
 
-    <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">Blank</ion-title>
-        </ion-toolbar>
-      </ion-header>
+      <!-- Kategori -->
+      <ion-grid>
+        <ion-row>
+          <!-- Card Rumah Sakit -->
+          <ion-col size="4">
+            <router-link to="/hospitals">
+              <ion-card>
+                <ion-icon name="heart-outline" size="large"></ion-icon>
+                <ion-card-content>Rumah Sakit</ion-card-content>
+              </ion-card>
+            </router-link>
+          </ion-col>
 
-      <div id="container">
-        <strong>Ready to create an app?</strong>
-        <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-      </div>
+          <!-- Card Gawat Darurat -->
+          <ion-col size="4">
+            <router-link to="/emergency">
+              <ion-card>
+                <ion-icon name="eye-outline" size="large"></ion-icon>
+                <ion-card-content>Gawat Darurat</ion-card-content>
+              </ion-card>
+            </router-link>
+          </ion-col>
+
+          <!-- Card Daftar Poli -->
+          <ion-col size="4">
+            <router-link to="/poli">
+              <ion-card>
+                <ion-icon name="body-outline" size="large"></ion-icon>
+                <ion-card-content>Daftar Poli</ion-card-content>
+              </ion-card>
+            </router-link>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
     </ion-content>
   </ion-page>
 </template>
 
-<script setup lang="ts">
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
+<script>
+import {
+  IonPage,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonImg,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonCard,
+  IonIcon,
+  IonCardContent,
+} from '@ionic/vue';
+
+export default {
+  name: 'HomePage',
+  components: {
+    IonPage,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonImg,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonCard,
+    IonIcon,
+    IonCardContent,
+  },
+};
 </script>
 
 <style scoped>
-#container {
+ion-card {
   text-align: center;
-  
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  margin: 5px;
+  height: 100px;
+  cursor: pointer;
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+ion-card-content {
+  font-size: 14px;
+  font-weight: bold;
+  color: #555;
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-  
-  color: #8c8c8c;
-  
-  margin: 0;
+ion-img {
+  margin-bottom: 20px;
 }
 
-#container a {
-  text-decoration: none;
+ion-icon {
+  color: #555;
 }
 </style>
