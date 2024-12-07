@@ -20,6 +20,7 @@
     "@ionic/vue": "^8.4.0",
     "@ionic/vue-router": "^8.4.0",
     "bcryptjs": "^2.4.3",
+    "date-fns": "^4.1.0",
     "firebase": "^11.0.2",
     "ionicons": "^7.0.0",
     "vue": "^3.3.0",

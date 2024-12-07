@@ -37,10 +37,20 @@
 
           <!-- Card Daftar Poli -->
           <ion-col size="4">
-            <router-link to="/poli">
+            <router-link to="/selecthospital">
               <ion-card>
                 <ion-icon name="body-outline" size="large"></ion-icon>
-                <ion-card-content>Daftar Poli</ion-card-content>
+                <ion-card-content>Daftar</ion-card-content>
+              </ion-card>
+            </router-link>
+          </ion-col>
+
+          <!-- Card UserCard -->
+          <ion-col size="4">
+            <router-link to="/user-card">
+              <ion-card>
+                <ion-icon name="list-outline" size="large"></ion-icon>
+                <ion-card-content>Kartu Antrean</ion-card-content>
               </ion-card>
             </router-link>
           </ion-col>
