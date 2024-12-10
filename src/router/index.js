@@ -12,7 +12,7 @@ import SelectHospital from "../views/SelectHospital.vue";
 
 const routes = [
   { path: "/", redirect: "/login" },
-  { path: "/login", component: Login },
+  { path: "/login", name: 'Login', component: Login },
   { path: "/register", component: Register },
   {
     path: "/home",
