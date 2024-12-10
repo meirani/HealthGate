@@ -17,7 +17,7 @@ import UserCard from "../views/UserCard.vue";
 
 const routes = [
   { path: "/", redirect: "/login" },
-  { path: "/login", component: Login },
+  { path: "/login", name: 'Login', component: Login },
   { path: "/register", component: Register },
   {
     path: "/home",
