@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "@ionic/vue-router";
 import { auth } from "../firebase";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
 
 import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
@@ -74,6 +75,19 @@ const routes = [
     component: UserCard,
     meta: { requiresAuth: true },
   },  
+  {
+    path: "/hospital/add",
+    name: "AddHospital",
+    component: () => import("../views/HospitalForm.vue"),
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
+  {
+    path: "/hospital/edit/:hospitalId",
+    name: "EditHospital",
+    component: () => import("../views/HospitalForm.vue"),
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
+  
 ];
 
 const router = createRouter({
@@ -89,5 +103,35 @@ router.beforeEach((to, from, next) => {
     next();
   }
 });
+
+async function checkRole() {
+  const db = getFirestore();
+  const user = auth.currentUser;
+  if (user) {
+    const userDoc = await getDoc(doc(db, "users", user.uid));
+    const userData = userDoc.data();
+    return userData.role;
+  }
+  return null;
+}
+
+router.beforeEach(async (to, from, next) => {
+  const user = auth.currentUser;
+
+  if (to.meta.requiresAuth && !user) {
+    next("/login");
+  } else if (to.meta.requiresAdmin) {
+    const role = await checkRole();
+    if (role === "admin") {
+      next();
+    } else {
+      alert("Anda tidak memiliki akses ke halaman ini.");
+      next("/home");
+    }
+  } else {
+    next();
+  }
+});
+
 
 export default router;
