@@ -5,116 +5,117 @@
                 <ion-title>Pilih Rumah Sakit</ion-title>
             </ion-toolbar>
         </ion-header>
-        <ion-content>
-            <ion-list v-if="hospitalList.length">
-                <ion-item v-for="hospital in hospitalList" :key="hospital.id">
-                    <ion-label>
-                        <h2>{{ hospital.name }}</h2>
-                        <p>{{ hospital.address }}</p>
-                        <p>Kontak: {{ hospital.contact }}</p>
-                    </ion-label>
-                </ion-item>
-            </ion-list>
-            <div v-else class="no-data">
-                <p>Tidak ada rumah sakit yang tersedia untuk poli dan tanggal yang dipilih.</p>
+
+        <ion-content class="ion-padding">
+            <div class="container">
+                <!-- <img src="@/assets/select-hospital.jpg" alt="Ilustrasi Rumah Sakit" class="illustration" /> -->
+
+                <div v-if="loading" class="text-center text-gray-600">Memuat data...</div>
+                <div v-else>
+                    <div v-if="hospitals.length === 0" class="text-center text-gray-600">
+                        Tidak ada rumah sakit tersedia.
+                    </div>
+                    <div v-for="hospital in hospitals" :key="hospital.id" class="card mb-4">
+                        <h2 class="hospital-name">{{ hospital.name }}</h2>
+                        <p class="hospital-address">{{ hospital.address }}</p>
+                        <p class="hospital-description">{{ hospital.deskripsi }}</p>
+                        <p class="hospital-contact">Kontak: {{ hospital.contact }}</p>
+                        <ion-button @click="goToPoliPage(hospital.id)" class="select-button" expand="block">
+                            Daftar
+                        </ion-button>
+                    </div>
+                </div>
             </div>
-            <ion-button expand="block" @click="goBack">
-                Kembali
-            </ion-button>
         </ion-content>
     </ion-page>
 </template>
 
 <script>
-import { defineComponent } from "vue";
-import { alertController } from "@ionic/vue";
-import { collection, getDocs, query, where, Timestamp } from "firebase/firestore";
-import { db } from "@/firebase";
+import { getFirestore, collection, getDocs } from "firebase/firestore";
 
-export default defineComponent({
+export default {
     name: "SelectHospital",
     data() {
         return {
-            hospitalList: [],
+            hospitals: [],
+            loading: true,
         };
     },
-    async mounted() {
-        const selectedDate = this.$route.query.date;
-        const selectedPoli = this.$route.query.poli;
-
-        console.log("Selected Date:", selectedDate);
-        console.log("Selected Poli:", selectedPoli);
-
-        if (!selectedDate || !selectedPoli) {
-            const alert = await alertController.create({
-                header: "Error",
-                message: "Data tanggal atau poli tidak ditemukan. Silakan kembali dan pilih ulang.",
-                buttons: ["OK"],
-            });
-            await alert.present();
-            return;
-        }
-
-        try {
-            const date = new Date(selectedDate);
-            const startOfDay = Timestamp.fromDate(new Date(date.setHours(0, 0, 0, 0)));
-            const endOfDay = Timestamp.fromDate(new Date(date.setHours(23, 59, 59, 999)));
-
-            const scheduleQuery = query(
-                collection(db, "doctor_schedules"),
-                where("poli_id", "==", selectedPoli),
-                where("tgl_praktek", ">=", startOfDay),
-                where("tgl_praktek", "<=", endOfDay)
-            );
-
-            const scheduleSnapshot = await getDocs(scheduleQuery);
-
-            const hospitalIds = new Set(
-                scheduleSnapshot.docs.map((doc) => doc.data().id_hospital)
-            );
-
-            if (hospitalIds.size > 0) {
-                const hospitals = [];
-                for (const hospitalId of hospitalIds) {
-                    const hospitalRef = collection(db, "hospitals");
-                    const hospitalQuery = query(
-                        hospitalRef,
-                        where("__name__", "==", hospitalId)
-                    );
-
-                    const hospitalSnapshot = await getDocs(hospitalQuery);
-                    hospitalSnapshot.forEach((doc) => {
-                        hospitals.push({
-                            id: doc.id,
-                            ...doc.data(),
-                        });
-                    });
-                }
-
-                this.hospitalList = hospitals;
-            }
-        } catch (error) {
-            console.error("Error fetching hospitals:", error);
-            const alert = await alertController.create({
-                header: "Error",
-                message: "Terjadi kesalahan saat mengambil data rumah sakit.",
-                buttons: ["OK"],
-            });
-            await alert.present();
-        }
-    },
     methods: {
-        goBack() {
-            this.$router.go(-1);
+        async fetchHospitals() {
+            try {
+                const db = getFirestore();
+                const querySnapshot = await getDocs(collection(db, "hospitals"));
+                this.hospitals = querySnapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                }));
+            } catch (error) {
+                console.error("Error fetching hospitals:", error);
+            } finally {
+                this.loading = false;
+            }
+        },
+        goToPoliPage(hospitalId) {
+            this.$router.push({ name: "PoliPage", params: { hospitalId } });
         },
     },
-});
+    mounted() {
+        this.fetchHospitals();
+    },
+};
 </script>
 
 <style scoped>
-.no-data {
-    text-align: center;
-    margin-top: 20px;
-    color: #666;
+.container {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    max-width: 600px;
+}
+
+.illustration {
+    display: block;
+    margin: 0 auto 20px;
+    width: 100%;
+    height: auto;
+}
+
+.card {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.hospital-name {
+    font-size: 20px;
+    font-weight: bold;
+    color: #006FAE;
+    margin-bottom: 10px;
+}
+
+.hospital-address,
+.hospital-description,
+.hospital-contact {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.select-button {
+    background-color: #006FAE;
+    color: white;
+    border-radius: 20px;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+.select-button:hover {
+    background-color: #004f75;
+    transition: background-color 0.3s;
 }
 </style>

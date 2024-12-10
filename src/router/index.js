@@ -9,6 +9,10 @@ import Profile from "../views/ProfilePage.vue"; // Import halaman ProfilePage
 import Hospitals from "../views/HospitalPage.vue"; // Import halaman HospitalPage
 import Emergency from "../views/EmergencyPage.vue"; // Import halaman EmergencyPage
 import SelectHospital from "../views/SelectHospital.vue";
+import DoctorSchedule from "../views/DoctorSchedule.vue"; // Import halaman
+import AppointmentPage from "../views/AppointmentPage.vue"; // Import halaman AppointmentPage
+import QueueCard from "../views/QueueCard.vue"; // Import halaman QueueCard
+import UserCard from "../views/UserCard.vue"; 
 
 const routes = [
   { path: "/", redirect: "/login" },
@@ -17,34 +21,59 @@ const routes = [
   {
     path: "/home",
     component: Home,
-    meta: { requiresAuth: true }, // Menandakan halaman ini membutuhkan autentikasi
+    meta: { requiresAuth: true },
   },
   {
-    path: "/poli",
+    path: "/poli/:hospitalId", // Update rute ini
+    name: "PoliPage", // Tambahkan nama rute ini
     component: Poli,
-    meta: { requiresAuth: true }, // Hanya dapat diakses jika sudah login
+    meta: { requiresAuth: true },
   },
   {
     path: "/profile",
     component: Profile,
-    meta: { requiresAuth: true }, // Hanya dapat diakses jika sudah login
+    meta: { requiresAuth: true },
   },
   {
     path: "/hospitals",
     component: Hospitals,
-    meta: { requiresAuth: true }, // Hanya dapat diakses jika sudah login
+    meta: { requiresAuth: true },
   },
   {
     path: "/emergency",
     component: Emergency,
-    meta: { requiresAuth: true }, // Hanya dapat diakses jika sudah login
+    meta: { requiresAuth: true },
   },
   {
     path: "/selecthospital",
-    name: "SelectHospital", // Tambahkan nama rute ini
+    name: "SelectHospital",
     component: SelectHospital,
-    meta: { requiresAuth: true }, // Hanya dapat diakses jika sudah login
+    meta: { requiresAuth: true },
   },
+  {
+    path: "/doctor-schedule/:hospitalId/:poliId",
+    name: "DoctorSchedule", // Nama rute
+    component: DoctorSchedule,
+    meta: { requiresAuth: true }, // Proteksi autentikasi
+  },
+  {
+    path: "/appointment/:hospitalId/:poliId/:doctorScheduleId", // Route untuk AppointmentPage
+    name: "AppointmentPage", // Nama rute
+    component: AppointmentPage, // Komponen AppointmentPage
+    meta: { requiresAuth: true }, // Proteksi autentikasi
+  },
+  {
+    path: "/queue-card",
+    name: "QueueCard",
+    component: QueueCard,
+    meta: { requiresAuth: true },
+  },  
+  {
+    path: "/user-card",
+    name: "UserCard",
+    component: UserCard,
+    meta: { requiresAuth: true },
+  },  
 ];
 
 const router = createRouter({
@@ -52,13 +81,12 @@ const router = createRouter({
   routes,
 });
 
-// Middleware untuk proteksi halaman
 router.beforeEach((to, from, next) => {
-  const user = auth.currentUser; // Mendapatkan user yang sedang login
+  const user = auth.currentUser;
   if (to.meta.requiresAuth && !user) {
-    next("/login"); // Jika user belum login, arahkan ke halaman login
+    next("/login");
   } else {
-    next(); // Lanjutkan navigasi
+    next();
   }
 });
 

@@ -19,7 +19,7 @@
           <ion-col size="4">
             <router-link to="/hospitals">
               <ion-card>
-                <ion-icon class="icons" :icon="icons.heart" size="large"></ion-icon>
+                <ion-icon name="heart-outline" size="large"></ion-icon>
                 <ion-card-content>Rumah Sakit</ion-card-content>
               </ion-card>
             </router-link>
@@ -29,7 +29,7 @@
           <ion-col size="4">
             <router-link to="/emergency">
               <ion-card>
-                <ion-icon class="icons" :icon="icons.medkit" size="large"></ion-icon>
+                <ion-icon name="eye-outline" size="large"></ion-icon>
                 <ion-card-content>Gawat Darurat</ion-card-content>
               </ion-card>
             </router-link>
@@ -37,10 +37,20 @@
 
           <!-- Card Daftar Poli -->
           <ion-col size="4">
-            <router-link to="/poli">
+            <router-link to="/selecthospital">
               <ion-card>
-                <ion-icon class="icons" :icon="icons.list" size="large"></ion-icon>
-                <ion-card-content>Daftar Poli</ion-card-content>
+                <ion-icon name="body-outline" size="large"></ion-icon>
+                <ion-card-content>Daftar</ion-card-content>
+              </ion-card>
+            </router-link>
+          </ion-col>
+
+          <!-- Card UserCard -->
+          <ion-col size="4">
+            <router-link to="/user-card">
+              <ion-card>
+                <ion-icon name="list-outline" size="large"></ion-icon>
+                <ion-card-content>Kartu Antrean</ion-card-content>
               </ion-card>
             </router-link>
           </ion-col>
@@ -51,9 +61,6 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue';
-import { heart, list, medkit} from 'ionicons/icons';
-
 import {
   IonPage,
   IonHeader,
@@ -69,7 +76,7 @@ import {
   IonCardContent,
 } from '@ionic/vue';
 
-export default defineComponent({
+export default {
   name: 'HomePage',
   components: {
     IonPage,
@@ -85,23 +92,14 @@ export default defineComponent({
     IonIcon,
     IonCardContent,
   },
-  data(){
-    return {
-      icons: {
-        heart,
-        list,
-        medkit
-      }
-    }
-  }
-});
+};
 </script>
 
 <style scoped>
 ion-card {
   text-align: center;
   margin: 5px;
-  height: 120px;
+  height: 100px;
   cursor: pointer;
 }
 
@@ -109,7 +107,6 @@ ion-card-content {
   font-size: 14px;
   font-weight: bold;
   color: #555;
-  margin-top: 5px;
 }
 
 ion-img {
@@ -118,12 +115,5 @@ ion-img {
 
 ion-icon {
   color: #555;
-  margin-bottom: 0px;
-}
-
-.icons {
-  margin-top: 10px;
-  
-  size: 30px;
 }
 </style>
