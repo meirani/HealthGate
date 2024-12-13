@@ -8,11 +8,12 @@
 
         <ion-content class="ion-padding">
             <div class="container">
-                <!-- <img src="@/assets/poli-page.jpg" alt="Ilustrasi Poli" class="illustration" /> -->
-
-                <!-- <h1 class="page-title">Pilih Poli</h1> -->
                 <div v-if="loading" class="text-center text-gray-600">Memuat data...</div>
                 <div v-else>
+                    <!-- Tombol Tambah Poli hanya untuk Admin -->
+                    <ion-button v-if="isAdmin" @click="goToAddPoli" expand="block" class="add-button">
+                        Tambah Poli
+                    </ion-button>
                     <div v-if="polyclinics.length === 0" class="text-center text-gray-600">
                         Tidak ada poli yang tersedia untuk rumah sakit ini.
                     </div>
@@ -22,6 +23,11 @@
                             <ion-button @click="goToDoctorSchedule(poli.id)" class="schedule-button" expand="block">
                                 Lihat Jadwal Dokter
                             </ion-button>
+                            <!-- Tombol Edit dan Delete hanya untuk Admin -->
+                            <ion-buttons v-if="isAdmin" slot="end" class="admin-buttons">
+                                <ion-button @click="editPoli(poli)" color="warning">Edit</ion-button>
+                                <ion-button @click="deletePoli(poli.id)" color="danger">Delete</ion-button>
+                            </ion-buttons>
                         </div>
                     </div>
                 </div>
@@ -31,7 +37,8 @@
 </template>
 
 <script>
-import { getFirestore, doc, collection, getDocs } from "firebase/firestore";
+import { getFirestore, doc, collection, getDocs, deleteDoc, getDoc } from "firebase/firestore";
+import { auth } from "../firebase";
 
 export default {
     name: "PoliPage",
@@ -39,6 +46,7 @@ export default {
         return {
             polyclinics: [],
             loading: true,
+            isAdmin: false,
         };
     },
     methods: {
@@ -46,12 +54,9 @@ export default {
             try {
                 const db = getFirestore();
                 const hospitalId = this.$route.params.hospitalId; // Mengambil hospitalId dari URL
-
-                // Mengakses subkoleksi `polyclinics` dari dokumen rumah sakit
                 const hospitalRef = doc(db, "hospitals", hospitalId);
                 const polyclinicsRef = collection(hospitalRef, "polyclinics");
                 const querySnapshot = await getDocs(polyclinicsRef);
-
                 this.polyclinics = querySnapshot.docs.map((doc) => ({
                     id: doc.id,
                     ...doc.data(),
@@ -62,12 +67,42 @@ export default {
                 this.loading = false;
             }
         },
+        async checkAdminRole() {
+            const user = auth.currentUser;
+            if (user) {
+                const db = getFirestore();
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                this.isAdmin = userDoc.exists() && userDoc.data().role === "admin";
+            }
+        },
+        goToAddPoli() {
+            const hospitalId = this.$route.params.hospitalId;
+            this.$router.push({ name: "AddPoli", params: { hospitalId } });
+        },
+        editPoli(poli) {
+            const hospitalId = this.$route.params.hospitalId;
+            this.$router.push({ name: "EditPoli", params: { hospitalId, poliId: poli.id } });
+        },
+        async deletePoli(poliId) {
+            const hospitalId = this.$route.params.hospitalId;
+            if (confirm("Apakah Anda yakin ingin menghapus poli ini?")) {
+                try {
+                    const db = getFirestore();
+                    const poliRef = doc(db, "hospitals", hospitalId, "polyclinics", poliId);
+                    await deleteDoc(poliRef);
+                    this.fetchPolyclinics(); // Refresh data setelah penghapusan
+                } catch (error) {
+                    console.error("Error deleting poli:", error);
+                }
+            }
+        },
         goToDoctorSchedule(poliId) {
             this.$router.push({ name: "DoctorSchedule", params: { poliId } });
         },
     },
     mounted() {
         this.fetchPolyclinics();
+        this.checkAdminRole();
     },
 };
 </script>
@@ -82,31 +117,11 @@ export default {
     max-width: 800px;
 }
 
-.illustration {
-    display: block;
-    margin: 0 auto 20px;
-    width: 100%;
-    height: auto;
-}
-
-.page-title {
-    font-size: 24px;
-    font-weight: bold;
-    text-align: center;
-    color: #006FAE;
-    margin-bottom: 16px;
-}
-
 .card {
     background-color: #f8f9fa;
     border-radius: 10px;
     padding: 15px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s;
-}
-
-.card:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .poli-name {
@@ -121,11 +136,18 @@ export default {
     color: white;
     border-radius: 20px;
     font-weight: bold;
-    margin-top: 10px;
 }
 
 .schedule-button:hover {
     background-color: #004f75;
     transition: background-color 0.3s;
+}
+
+.add-button {
+    margin-bottom: 15px;
+}
+
+.admin-buttons ion-button {
+    margin-top: 10px;
 }
 </style>

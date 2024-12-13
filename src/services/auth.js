@@ -38,8 +38,9 @@ export async function registerUser(email, password, username) {
       email,
       password: hashedPassword, // Simpan password yang sudah di-hash
       createdAt: new Date(),
-    });
-
+      role: "user", // Default role
+    });    
+    
     return "Akun berhasil dibuat.";
   } catch (error) {
     throw new Error(error.message);

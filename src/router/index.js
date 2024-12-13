@@ -17,7 +17,7 @@ import UserCard from "../views/UserCard.vue";
 
 const routes = [
   { path: "/", redirect: "/login" },
-  { path: "/login", name: 'Login', component: Login },
+  { path: "/login", name: "Login", component: Login },
   { path: "/register", component: Register },
   {
     path: "/home",
@@ -25,8 +25,8 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: "/poli/:hospitalId", // Update rute ini
-    name: "PoliPage", // Tambahkan nama rute ini
+    path: "/poli/:hospitalId",
+    name: "PoliPage",
     component: Poli,
     meta: { requiresAuth: true },
   },
@@ -53,28 +53,28 @@ const routes = [
   },
   {
     path: "/doctor-schedule/:hospitalId/:poliId",
-    name: "DoctorSchedule", // Nama rute
+    name: "DoctorSchedule",
     component: DoctorSchedule,
-    meta: { requiresAuth: true }, // Proteksi autentikasi
+    meta: { requiresAuth: true },
   },
   {
-    path: "/appointment/:hospitalId/:poliId/:doctorScheduleId", // Route untuk AppointmentPage
-    name: "AppointmentPage", // Nama rute
-    component: AppointmentPage, // Komponen AppointmentPage
-    meta: { requiresAuth: true }, // Proteksi autentikasi
+    path: "/appointment/:hospitalId/:poliId/:doctorScheduleId",
+    name: "AppointmentPage",
+    component: AppointmentPage,
+    meta: { requiresAuth: true },
   },
   {
     path: "/queue-card",
     name: "QueueCard",
     component: QueueCard,
     meta: { requiresAuth: true },
-  },  
+  },
   {
     path: "/user-card",
     name: "UserCard",
     component: UserCard,
     meta: { requiresAuth: true },
-  },  
+  },
   {
     path: "/hospital/add",
     name: "AddHospital",
@@ -85,6 +85,30 @@ const routes = [
     path: "/hospital/edit/:hospitalId",
     name: "EditHospital",
     component: () => import("../views/HospitalForm.vue"),
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
+  {
+    path: "/poli/add/:hospitalId",
+    name: "AddPoli",
+    component: () => import("../views/PoliForm.vue"),
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
+  {
+    path: "/poli/edit/:hospitalId/:poliId",
+    name: "EditPoli",
+    component: () => import("../views/PoliForm.vue"),
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
+  {
+    path: "/doctor-schedule/add/:hospitalId/:poliId",
+    name: "AddDoctorSchedule",
+    component: () => import("../views/DsForm.vue"),
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
+  {
+    path: "/doctor-schedule/edit/:hospitalId/:poliId/:doctorScheduleId",
+    name: "EditDoctorSchedule",
+    component: () => import("../views/DsForm.vue"),
     meta: { requiresAuth: true, requiresAdmin: true },
   },
   
@@ -132,6 +156,5 @@ router.beforeEach(async (to, from, next) => {
     next();
   }
 });
-
 
 export default router;

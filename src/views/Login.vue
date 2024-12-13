@@ -42,6 +42,8 @@ import { IonPage, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, Io
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import "@/assets/css/formstyle.css";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
 export default {
   name: "Login",
@@ -84,6 +86,30 @@ export default {
     goToRegister() {
       this.$router.push("/register");
     },
+  },
+  async login() {
+    if (!this.email.trim() || !this.password.trim()) {
+      alert("Email dan password tidak boleh kosong!");
+      return;
+    }
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, this.email, this.password);
+      const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
+      const role = userDoc.data().role;
+
+      alert("Login berhasil!");
+
+      if (role === "admin") {
+        this.$router.push("/admin"); // Arahkan ke halaman Admin
+      } else {
+        this.$router.push("/home"); // Arahkan ke halaman Home
+      }
+    } catch (error) {
+      console.error("Error code:", error.code);
+      console.error("Error message:", error.message);
+      alert(error.message);
+    }
   },
 };
 </script>

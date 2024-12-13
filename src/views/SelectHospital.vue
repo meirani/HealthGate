@@ -8,10 +8,11 @@
 
         <ion-content class="ion-padding">
             <div class="container">
-                <!-- <img src="@/assets/select-hospital.jpg" alt="Ilustrasi Rumah Sakit" class="illustration" /> -->
-
                 <div v-if="loading" class="text-center text-gray-600">Memuat data...</div>
                 <div v-else>
+                    <ion-button v-if="isAdmin" @click="goToAddHospital" expand="block" class="add-button">
+                        Tambah Rumah Sakit
+                    </ion-button>
                     <div v-if="hospitals.length === 0" class="text-center text-gray-600">
                         Tidak ada rumah sakit tersedia.
                     </div>
@@ -23,6 +24,11 @@
                         <ion-button @click="goToPoliPage(hospital.id)" class="select-button" expand="block">
                             Daftar
                         </ion-button>
+                        <!-- Tombol Edit dan Delete untuk admin -->
+                        <ion-buttons v-if="isAdmin" slot="end" class="admin-buttons">
+                            <ion-button @click="editHospital(hospital)" color="warning">Edit</ion-button>
+                            <ion-button @click="deleteHospital(hospital.id)" color="danger">Delete</ion-button>
+                        </ion-buttons>
                     </div>
                 </div>
             </div>
@@ -31,7 +37,8 @@
 </template>
 
 <script>
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { getFirestore, collection, getDocs, doc, getDoc, deleteDoc } from "firebase/firestore";
+import { auth } from "../firebase";
 
 export default {
     name: "SelectHospital",
@@ -39,6 +46,7 @@ export default {
         return {
             hospitals: [],
             loading: true,
+            isAdmin: false,
         };
     },
     methods: {
@@ -56,15 +64,44 @@ export default {
                 this.loading = false;
             }
         },
+        async checkAdminRole() {
+            const user = auth.currentUser;
+            console.log("User data from auth:", user); // Debug auth data
+            if (user) {
+                const db = getFirestore();
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                console.log("User document from Firestore:", userDoc.data()); // Debug Firestore data
+                this.isAdmin = userDoc.exists() && userDoc.data().role === "admin";
+            }
+        },
+        goToAddHospital() {
+            this.$router.push({ name: "AddHospital" });
+        },
+        editHospital(hospital) {
+            this.$router.push({ name: "EditHospital", params: { hospitalId: hospital.id } });
+        },
+        async deleteHospital(hospitalId) {
+            if (confirm("Apakah Anda yakin ingin menghapus rumah sakit ini?")) {
+                try {
+                    const db = getFirestore();
+                    await deleteDoc(doc(db, "hospitals", hospitalId));
+                    this.fetchHospitals(); // Refresh data setelah penghapusan
+                } catch (error) {
+                    console.error("Error deleting hospital:", error);
+                }
+            }
+        },
         goToPoliPage(hospitalId) {
             this.$router.push({ name: "PoliPage", params: { hospitalId } });
         },
     },
     mounted() {
         this.fetchHospitals();
+        this.checkAdminRole();
     },
 };
 </script>
+
 
 <style scoped>
 .container {

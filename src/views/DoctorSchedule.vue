@@ -10,14 +10,24 @@
             <div class="container">
                 <div v-if="loading" class="text-center text-gray-600">Memuat data...</div>
                 <div v-else>
+                    <ion-button v-if="isAdmin" @click="goToAddDoctorSchedule" expand="block" class="add-button">
+                        Tambah Jadwal Dokter
+                    </ion-button>
                     <div v-if="doctorSchedules.length === 0" class="text-center text-gray-600">
                         Tidak ada jadwal dokter yang tersedia untuk poli ini.
                     </div>
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                        <div v-for="schedule in doctorSchedules" :key="schedule.id" class="card cursor-pointer"
-                            @click="goToAppointmentPage(schedule.id)">
-                            <h2 class="doctor-name">{{ schedule.name }}</h2>
-                            <p class="schedule-info">{{ schedule.schedule }}</p>
+                        <div v-for="schedule in doctorSchedules" :key="schedule.id" class="card cursor-pointer">
+                            <div @click="goToAppointmentPage(schedule.id)">
+                                <h2 class="doctor-name">{{ schedule.name }}</h2>
+                                <p class="schedule-info">{{ schedule.schedule }}</p>
+                            </div>
+                            <!-- Tombol CRUD admin -->
+                            <ion-buttons v-if="isAdmin" slot="end" class="admin-buttons">
+                                <ion-button @click="editDoctorSchedule(schedule)" color="warning">Edit</ion-button>
+                                <ion-button @click="deleteDoctorSchedule(schedule.id)"
+                                    color="danger">Delete</ion-button>
+                            </ion-buttons>
                         </div>
                     </div>
                 </div>
@@ -27,24 +37,24 @@
 </template>
 
 <script>
-import { getFirestore, doc, collection, getDocs } from "firebase/firestore";
+import { getFirestore, doc, collection, getDocs, deleteDoc, getDoc } from "firebase/firestore";
+import { auth } from "../firebase";
 
 export default {
-    name: "DoctorSchedule",
     data() {
         return {
             doctorSchedules: [],
             loading: true,
+            isAdmin: false,
         };
     },
     methods: {
         async fetchDoctorSchedules() {
             try {
                 const db = getFirestore();
-                const hospitalId = this.$route.params.hospitalId; // Mengambil hospitalId dari URL
-                const poliId = this.$route.params.poliId; // Mengambil poliId dari URL
+                const hospitalId = this.$route.params.hospitalId;
+                const poliId = this.$route.params.poliId;
 
-                // Akses subkoleksi doctor_schedules dari koleksi hospitals -> polyclinics
                 const polyRef = doc(db, "hospitals", hospitalId, "polyclinics", poliId);
                 const scheduleRef = collection(polyRef, "doctor_schedules");
                 const querySnapshot = await getDocs(scheduleRef);
@@ -59,10 +69,37 @@ export default {
                 this.loading = false;
             }
         },
+        async checkAdminRole() {
+            const user = auth.currentUser;
+            if (user) {
+                const db = getFirestore();
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                this.isAdmin = userDoc.exists() && userDoc.data().role === "admin";
+            }
+        },
+        goToAddDoctorSchedule() {
+            const { hospitalId, poliId } = this.$route.params;
+            this.$router.push({ name: "AddDoctorSchedule", params: { hospitalId, poliId } });
+        },
+        editDoctorSchedule(schedule) {
+            const { hospitalId, poliId } = this.$route.params;
+            this.$router.push({ name: "EditDoctorSchedule", params: { hospitalId, poliId, doctorScheduleId: schedule.id } });
+        },
+        async deleteDoctorSchedule(scheduleId) {
+            if (confirm("Apakah Anda yakin ingin menghapus jadwal dokter ini?")) {
+                try {
+                    const db = getFirestore();
+                    const { hospitalId, poliId } = this.$route.params;
+                    const scheduleRef = doc(db, "hospitals", hospitalId, "polyclinics", poliId, "doctor_schedules", scheduleId);
+                    await deleteDoc(scheduleRef);
+                    this.fetchDoctorSchedules(); // Refresh data
+                } catch (error) {
+                    console.error("Error deleting doctor schedule:", error);
+                }
+            }
+        },
         goToAppointmentPage(doctorScheduleId) {
-            const hospitalId = this.$route.params.hospitalId;
-            const poliId = this.$route.params.poliId;
-
+            const { hospitalId, poliId } = this.$route.params;
             this.$router.push({
                 name: "AppointmentPage",
                 params: { hospitalId, poliId, doctorScheduleId },
@@ -71,6 +108,7 @@ export default {
     },
     mounted() {
         this.fetchDoctorSchedules();
+        this.checkAdminRole();
     },
 };
 </script>
@@ -112,5 +150,11 @@ export default {
 .schedule-info {
     color: #333;
     font-size: 14px;
+}
+
+.admin-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
 }
 </style>
