@@ -5,9 +5,14 @@
                 <ion-title>Profile</ion-title>
             </ion-toolbar>
         </ion-header>
+<<<<<<< Updated upstream
 
         <ion-content class="profile-content">
             <ion-card>
+=======
+        <ion-content >
+            <ion-card class="container">
+>>>>>>> Stashed changes
                 <div class="profile-header">
                     <h2 class="profile-title">Your Profile</h2>
                     <ion-avatar class="avatar">
@@ -28,6 +33,7 @@
                             <span class="info-value">{{ email }}</span>
                         </ion-item>
                     </div>
+<<<<<<< Updated upstream
 
                     <!-- Edit Mode -->
                     <div v-if="isEditing">
@@ -51,6 +57,15 @@
                             <ion-input type="password" v-model="confirmPassword"
                                 placeholder="Konfirmasi password baru"></ion-input>
                         </ion-item>
+=======
+                    <div class="input-group">
+                        <ion-label >Nama Pengguna</ion-label>
+                        <ion-input v-model="username" class="profile-input" aria-disabled="false">windah</ion-input>
+                    </div>
+                    <div class="input-group">
+                        <ion-label >Email</ion-label>
+                        <ion-input v-model="email" class="profile-input" aria-disabled="false">windah@gmail.com</ion-input>
+>>>>>>> Stashed changes
                     </div>
                 </div>
 
@@ -226,10 +241,34 @@ ion-card {
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
+<<<<<<< Updated upstream
 .profile-header {
     text-align: center;
     margin-bottom: 20px;
 }
+=======
+ion-label {
+    text-align: left;
+    font-size: 15px;
+     color: #333;
+    
+}
+
+.container {
+    background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  margin: 20px auto;
+  max-width: 300px;
+  margin-bottom: 100px;
+}
+
+/* .profile-header {
+    text-align: center;
+    margin-bottom: 16px;
+} */
+>>>>>>> Stashed changes
 
 .avatar {
     margin: 10px auto;
@@ -241,6 +280,7 @@ ion-card {
     margin-bottom: 15px;
 }
 
+<<<<<<< Updated upstream
 .info-label {
     font-weight: bold;
     font-size: 14px;
@@ -248,6 +288,44 @@ ion-card {
 }
 
 .info-value {
+=======
+
+ion-input {
+    
+    width: 100%;
+    height: 20px;
+     --padding-start: 10px; /* Inner padding on the left */
+  --padding-end: 10px; /* Inner padding on the right */
+  --padding-top: 5px; /* Inner padding on the top */
+  --padding-bottom: 5px;
+    padding: 10px;
+    margin-right: 10px;
+    margin-bottom: 16px;
+}
+
+.profile-input {
+    --padding-start: 10px; /* Geser teks placeholder dari kiri */
+    --padding-end: 10px;
+    font-size: medium;
+    color: black;
+    padding-left: 10px; /* Jarak dari kiri */
+    padding-right: 10px; /* Tambahkan jika ingin jarak kanan */
+    padding-top: 5px; /* Jarak dari atas */
+    padding-bottom: 5px; /* Jarak dari bawah */
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    text-align: left;
+    line-height: 40px;
+   
+}
+
+.profile-actions {
+    margin-top: 16px;
+}
+
+.button-logout {
+    height: 40px;
+>>>>>>> Stashed changes
     font-size: 16px;
     color: #555;
 }
@@ -255,4 +333,28 @@ ion-card {
 .profile-actions ion-button {
     margin-top: 10px;
 }
+
+.profile-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Mengisi seluruh tinggi viewport */
+    padding: 16px;
+    background-color: #f8f9fa;
+    box-sizing: border-box; /* Memastikan padding dihitung dalam ukuran elemen */
+}
+
+ion-card {
+    width: 100%;
+    max-width: 400px; 
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    background: #fff; 
+}
+
+.avatar-edit {
+    flex-direction: column; 
+    gap: 8px; }
+
 </style>

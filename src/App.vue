@@ -1,16 +1,18 @@
 <template>
   <ion-app>
     <ion-tabs>
+      <!-- Konten utama -->
       <ion-router-outlet :key="$route.fullPath"></ion-router-outlet>
-      <!-- Bottom Navigation Bar -->
-      <ion-tab-bar v-if="showTabBar" slot="bottom" translucent>
+
+      <!-- Tab Bar di Footer -->
+      <ion-tab-bar v-if="showTabBar" slot="bottom">
         <ion-tab-button tab="home" href="/home">
           <ion-icon :icon="icons.home"></ion-icon>
           <ion-label class="label-tab-bar">Home</ion-label>
         </ion-tab-button>
-        <ion-tab-button tab="poli" href="/poli">
+        <ion-tab-button tab="poli" href="/selecthospital">
           <ion-icon :icon="icons.list"></ion-icon>
-          <ion-label class="label-tab-bar">Poli</ion-label>
+          <ion-label class="label-tab-bar">Register</ion-label>
         </ion-tab-button>
         <ion-tab-button tab="profile" href="/profile">
           <ion-icon :icon="icons.person"></ion-icon>
@@ -22,12 +24,20 @@
 </template>
 
 <script>
-import { defineComponent, computed } from 'vue';
-import { IonApp, IonTabs, IonRouterOutlet, IonTabBar, IonTabButton, IonIcon, IonLabel } from '@ionic/vue';
-import { home, list, person } from 'ionicons/icons';
+import { defineComponent } from "vue";
+import {
+  IonApp,
+  IonTabs,
+  IonRouterOutlet,
+  IonTabBar,
+  IonTabButton,
+  IonIcon,
+  IonLabel,
+} from "@ionic/vue";
+import { home, list, person } from "ionicons/icons";
 
 export default defineComponent({
-  name: 'App',
+  name: "App",
   components: {
     IonApp,
     IonTabs,
@@ -35,30 +45,30 @@ export default defineComponent({
     IonTabBar,
     IonTabButton,
     IonIcon,
-    IonLabel
+    IonLabel,
   },
   data() {
     return {
       icons: {
         home,
         list,
-        person
-      }
+        person,
+      },
     };
   },
   computed: {
     showTabBar() {
-      return this.$route.name !== 'Login';
-    }
-  }
+      return this.$route.name !== "Login";
+    },
+  },
 });
 </script>
 
-<style>
+<style scoped>
+/* Jangan gunakan posisi fixed di sini */
 ion-tab-bar {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
+  background-color: #ffffff;
+  border-top: 1px solid #e0e0e0;
 }
 
 .label-tab-bar {

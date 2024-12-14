@@ -6,7 +6,7 @@
             </ion-toolbar>
         </ion-header>
 
-        <ion-content class="ion-padding">
+        <ion-content >
             <div class="container">
                 <h2 class="page-title">Informasi Pendaftaran</h2>
                 <div class="info-box">
@@ -73,6 +73,11 @@ export default {
 </script>
 
 <style scoped>
+ion-content {
+    margin-bottom: 500px;
+    --padding-bottom: 60px;
+}
+
 .page-title {
     font-size: 20px;
     font-weight: bold;
