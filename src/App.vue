@@ -2,7 +2,7 @@
   <ion-app>
     <ion-tabs>
       <!-- Konten utama -->
-      <ion-router-outlet :key="$route.fullPath"></ion-router-outlet>
+      <ion-router-outlet :key="$route.fullPath" style="color:#418d4e;"></ion-router-outlet>
 
       <!-- Tab Bar di Footer -->
       <ion-tab-bar v-if="showTabBar" slot="bottom">
@@ -65,13 +65,31 @@ export default defineComponent({
 </script>
 
 <style scoped>
-/* Jangan gunakan posisi fixed di sini */
+/* Warna background untuk tab bar */
 ion-tab-bar {
   background-color: #ffffff;
   border-top: 1px solid #e0e0e0;
+  height: 60px;
+  vertical-align: middle;
 }
 
+/* Styling label tab bar */
 .label-tab-bar {
   font-size: 0.8rem;
+}
+
+/* Warna hijau saat hover */
+ion-tab-button:hover {
+ 
+  --color-selected: #4caf50; /* Warna hijau untuk elemen yang dipilih */
+}
+
+ion-tab-button:hover ion-label,
+ion-tab-button:hover ion-icon {
+  color: #4caf50; /* Warna hijau untuk teks dan ikon saat hover */
+}
+
+ion-title {
+  color: #4caf50; /* Ubah warna teks menjadi hijau */
 }
 </style>

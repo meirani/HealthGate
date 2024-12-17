@@ -3,36 +3,38 @@
     <!-- Header -->
     <ion-header>
       <ion-toolbar>
-        <ion-title class="header-title">GAWAT DARURAT</ion-title>
+        <ion-buttons slot="start">
+          <a class="back-button" @click="goBack">
+            Back
+          </a >
+        </ion-buttons>
+        <ion-title class="header-title">Emergency</ion-title>
       </ion-toolbar>
     </ion-header>
 
     <!-- Content -->
-    <ion-content class="ion-padding">
+    <ion-content class="ion-padding" style="--background: #e1eee9;">
       <!-- Gambar -->
-      <div class="banner-wrapper">
-        <ion-img src="emergency.jpg" alt="Emergency" class="emergency-image"></ion-img>
+      <div class="banner">
+        <img src="@/assets/emergency-banner.png" alt="Emergency" class="banner-image" />
       </div>
-      
-      <!-- Emergency cards -->  
-      <div class="emergency-list">
-        <ion-card class="emergency-card">
-          <ion-img src="rumahsakit.jpg" alt="Hospital Image" class="emergency-images"></ion-img>
-          <div class="emergency-details">
-            <h3>Nama RS</h3>
-            <div class="phone-hospital">
-              <ion-icon class="icons" :icon="icons.call" size="medium"></ion-icon>
-              <a href="javascript:void(0)" @click="showCallAlert('02818904888')" style="color: blue; text-decoration: underline;">
-                0281 8904888
-              </a>
-            </div>
+
+      <!-- Kartu Gawat Darurat -->
+      <ion-card class="emergency-card">
+        <img src="@/assets/ambulance.jpg" alt="Ambulance Image" class="emergency-image" />
+        <ion-card-content>
+          <h3 class="emergency-title">GAWAT DARURAT</h3>
+          <p class="emergency-description">Dapatkan bantuan darurat medis dari Health Gate</p>
+          <div class="call-section">
+            <ion-icon :icon="call" class="call-icon"></ion-icon>
+            <a href="javascript:void(0)" @click="showCallAlert('911')" style="color: blue; text-decoration: none; font-size: 25px; font-weight: 20px; ">911</a>
           </div>
-        </ion-card>
-      </div>
+        </ion-card-content>
+      </ion-card>
 
       <!-- Alert -->
       <ion-alert
-        :is-open="isAlertOpen"
+        :isOpen="isAlertOpen"
         header="Call"
         :message="alertMessage"
         :buttons="getAlertButtons()"
@@ -44,7 +46,19 @@
 
 <script>
 import { defineComponent, ref } from 'vue';
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonImg, IonCard, IonIcon, IonAlert } from '@ionic/vue';
+import {
+  IonPage,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonCard,
+  IonCardContent,
+  IonIcon,
+  IonButton,
+  IonButtons,
+  IonAlert,
+} from '@ionic/vue';
 import { call } from 'ionicons/icons';
 
 export default defineComponent({
@@ -55,10 +69,12 @@ export default defineComponent({
     IonToolbar,
     IonTitle,
     IonContent,
-    IonImg,
     IonCard,
+    IonCardContent,
     IonIcon,
-    IonAlert
+    IonButton,
+    IonButtons,
+    IonAlert,
   },
   setup() {
     const isAlertOpen = ref(false);
@@ -71,70 +87,41 @@ export default defineComponent({
       isAlertOpen.value = true;
     };
 
-    // Fungsi untuk menghasilkan array buttons secara dinamis
     const getAlertButtons = () => [
       {
         text: 'Cancel',
         role: 'cancel',
         handler: () => {
           isAlertOpen.value = false;
-        }
+        },
       },
       {
         text: 'Call',
         handler: () => {
           window.open(`tel:${alertPhoneNumber.value}`, '_self');
-        }
-      }
+        },
+      },
     ];
 
+    const goBack = () => {
+      window.history.back();
+    };
+
     return {
-      icons: {
-        call
-      },
+      call,
       isAlertOpen,
       alertMessage,
       alertPhoneNumber,
       showCallAlert,
-      getAlertButtons
+      getAlertButtons,
+      goBack,
     };
-  }
+  },
 });
 </script>
 
 <style scoped>
-.phone-hospital {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.emergency-list {
-  margin: 16px;
-}
-
-.emergency-card {
-  display: flex;
-  align-items: center;
-  margin: 16px 0;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-}
-
-.emergency-images {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-right: 12px;
-}
-
-.emergency-details {
-  flex: 1;
-}
-
-/* Gaya Header */
+/* Header */
 .header-title {
   font-size: 20px;
   font-weight: bold;
@@ -142,9 +129,69 @@ export default defineComponent({
   color: #3b82f6;
 }
 
-/* Gambar Emergency */
-.emergency-image {
+.back-button {
+  color: #3b82f6;
+  font-size: 16px;
+  background-color: transparent ;
+}
+
+/* Gambar Banner */
+.banner {
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.banner-image {
+  border-radius: 20px;
   width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* Kartu Darurat */
+.emergency-card {
+  margin: 20px auto;
+  padding: 16px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #ffffff;
+}
+
+.emergency-image {
+  width: 300px;
+  height: 300px;
+  object-fit: contain;
+  margin-bottom: 12px;
+  border-radius: 20px;
+}
+
+.emergency-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
   margin: 0;
+}
+
+.emergency-description {
+  font-size: 14px;
+  text-align: center;
+  color: #666;
+  margin: 8px 0 16px;
+}
+
+.call-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.call-icon {
+  font-size: 20px;
+  color: #3b82f6;
 }
 </style>

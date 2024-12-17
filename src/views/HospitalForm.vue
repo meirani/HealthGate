@@ -2,38 +2,43 @@
     <ion-page>
         <ion-header>
             <ion-toolbar>
-                <ion-title>{{ isEdit ? "Edit Rumah Sakit" : "Tambah Rumah Sakit" }}</ion-title>
+                  <ion-buttons slot="start">
+          <a class="back-button" @click="goBack">
+            Back
+          </a >
+        </ion-buttons>
+                <ion-title>{{ isEdit ? "Update Hospital" : "Add Hospital" }}</ion-title>
             </ion-toolbar>
         </ion-header>
 
-        <ion-content class="ion-padding">
+        <ion-content class="ion-padding" style="--background: #e1eee9;">
             <div class="container">
                 <ion-item>
-                    <ion-label position="stacked">Nama Rumah Sakit</ion-label>
+                    <ion-label position="stacked" class="items">Nama Rumah Sakit</ion-label>
                     <ion-input :value="hospital.name" placeholder="Masukkan nama rumah sakit"
                         @ionInput="hospital.name = $event.target.value"></ion-input>
                 </ion-item>
 
                 <ion-item>
-                    <ion-label position="stacked">Alamat</ion-label>
+                    <ion-label position="stacked" class="items">Alamat</ion-label>
                     <ion-input :value="hospital.address" placeholder="Masukkan alamat"
                         @ionInput="hospital.address = $event.target.value"></ion-input>
                 </ion-item>
 
                 <ion-item>
-                    <ion-label position="stacked">Kontak</ion-label>
+                    <ion-label position="stacked" class="items">Kontak</ion-label>
                     <ion-input :value="hospital.contact" placeholder="Masukkan kontak"
                         @ionInput="hospital.contact = $event.target.value"></ion-input>
                 </ion-item>
 
                 <ion-item>
-                    <ion-label position="stacked">Deskripsi</ion-label>
+                    <ion-label position="stacked" class="items">Deskripsi</ion-label>
                     <ion-textarea :value="hospital.deskripsi" placeholder="Masukkan deskripsi"
                         @ionInput="hospital.deskripsi = $event.target.value"></ion-textarea>
                 </ion-item>
 
                 <ion-button expand="block" @click="saveHospital">
-                    {{ isEdit ? "Simpan Perubahan" : "Tambah Rumah Sakit" }}
+                    {{ isEdit ? "Update" : "Add" }}
                 </ion-button>
             </div>
         </ion-content>
@@ -43,9 +48,20 @@
 
 <script>
 import { getFirestore, doc, getDoc, setDoc, collection, getDocs } from "firebase/firestore";
+import { IonPage, IonHeader, IonToolbar, IonButtons, IonTitle, IonContent, IonButton } from "@ionic/vue";
+import { useRouter } from "vue-router";
 
 export default {
     name: "HospitalForm",
+    components: {
+        IonPage,
+        IonHeader,
+        IonToolbar,
+        IonButtons,
+        IonTitle,
+        IonContent,
+        IonButton,
+    },
     data() {
         return {
             hospital: {
@@ -76,6 +92,9 @@ export default {
         }
     },
     methods: {
+        goBack() {
+            this.$router.back();
+        },
         async getNextHospitalId() {
             try {
                 const db = getFirestore();
@@ -126,3 +145,11 @@ export default {
     },
 };
 </script>
+
+<style scoped>
+.items {
+    font-weight: bolder;
+    font-size: medium;
+}
+
+</style>

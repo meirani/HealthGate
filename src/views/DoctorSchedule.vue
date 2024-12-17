@@ -2,36 +2,58 @@
     <ion-page>
         <ion-header>
             <ion-toolbar>
-                <ion-title>Jadwal Dokter</ion-title>
+                  <ion-buttons slot="start">
+          <a class="back-button" @click="goBack">
+            Back
+          </a >
+        </ion-buttons>
+                <ion-title>Doctors Schedule</ion-title>
             </ion-toolbar>
         </ion-header>
 
-        <ion-content class="ion-padding">
-            <div class="container">
+        <ion-content class="ion-padding" style="--background: #e1eee9">
+            
                 <div v-if="loading" class="text-center text-gray-600">Memuat data...</div>
                 <div v-else>
-                    <ion-button v-if="isAdmin" @click="goToAddDoctorSchedule" expand="block" class="add-button">
-                        Tambah Jadwal Dokter
-                    </ion-button>
+                   
                     <div v-if="doctorSchedules.length === 0" class="text-center text-gray-600">
                         Tidak ada jadwal dokter yang tersedia untuk poli ini.
                     </div>
-                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <div>
+                        <h2 style="font-weight: bold; margin-top: 1px; ">Choose your preferred Doctor</h2>
+                    </div>
+                    <div class="card-doctor">
                         <div v-for="schedule in doctorSchedules" :key="schedule.id" class="card cursor-pointer">
                             <div @click="goToAppointmentPage(schedule.id)">
                                 <h2 class="doctor-name">{{ schedule.name }}</h2>
                                 <p class="schedule-info">{{ schedule.schedule }}</p>
                             </div>
+
                             <!-- Tombol CRUD admin -->
                             <ion-buttons v-if="isAdmin" slot="end" class="admin-buttons">
-                                <ion-button @click="editDoctorSchedule(schedule)" color="warning">Edit</ion-button>
+                                <ion-button @click="editDoctorSchedule(schedule)" color="warning">
+                                     <img class="ud-icon" src="@/assets/edit-icon.png" alt="">
+                                </ion-button>
                                 <ion-button @click="deleteDoctorSchedule(schedule.id)"
-                                    color="danger">Delete</ion-button>
+                                    color="danger">
+                                     <img class="ud-icon" src="@/assets/delete-icon.png" alt="">
+                                </ion-button>
                             </ion-buttons>
                         </div>
                     </div>
                 </div>
-            </div>
+
+                
+
+                 <!-- Ruang Scroll Tambahan -->
+                    <div class="scroll-padding"></div>
+
+                     
+
+                     <button v-if="isAdmin" @click="goToAddDoctorSchedule" expand="block" class="add-button">
+                        <img class="icon-add" src="@/assets/add-icon.png"></img>
+                    </button>
+        
         </ion-content>
     </ion-page>
 </template>
@@ -39,8 +61,19 @@
 <script>
 import { getFirestore, doc, collection, getDocs, deleteDoc, getDoc } from "firebase/firestore";
 import { auth } from "../firebase";
-
+import { IonPage, IonHeader, IonToolbar, IonButtons, IonTitle, IonContent, IonButton } from "@ionic/vue";
+import { useRouter } from "vue-router";
 export default {
+    components: {
+        IonPage,
+        IonHeader,
+        IonToolbar,
+        IonButtons,
+        IonTitle,
+        IonContent,
+        IonButton,
+    },
+
     data() {
         return {
             doctorSchedules: [],
@@ -49,6 +82,9 @@ export default {
         };
     },
     methods: {
+        goBack() {
+            this.$router.back();
+        },
         async fetchDoctorSchedules() {
             try {
                 const db = getFirestore();
@@ -114,6 +150,33 @@ export default {
 </script>
 
 <style scoped>
+.card-doctor {
+    margin-bottom: 40px;
+}
+
+.add-button {
+     position: fixed;
+  bottom: 30px; /* Sesuaikan agar di atas bottom tab bar */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000; /* Pastikan ini lebih besar agar tombol tetap di atas elemen lain */
+  width: 60px;
+    height: 60px;
+    border-radius: 25%;
+    background-color: #038d92;
+    box-shadow: inset;
+}
+
+.ud-icon {
+    width: 30px;
+    height: 30px;
+}
+
+.icon-add {
+    height: 40px;
+    width: 40px;
+}
+
 .container {
     background: white;
     border-radius: 12px;

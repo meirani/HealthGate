@@ -2,20 +2,25 @@
     <ion-page>
         <ion-header>
             <ion-toolbar>
-                <ion-title>{{ isEditMode ? "Edit Poli" : "Tambah Poli" }}</ion-title>
+                  <ion-buttons slot="start">
+          <a class="back-button" @click="goBack">
+            Back
+          </a >
+        </ion-buttons>
+                <ion-title>{{ isEditMode ? "Update Poli" : "Add Poli" }}</ion-title>
             </ion-toolbar>
         </ion-header>
 
-        <ion-content class="ion-padding">
+        <ion-content class="ion-padding" style="--background: #e1eee9;">
             <div class="container">
                 <ion-item>
-                    <ion-label position="stacked">Nama Poli</ion-label>
+                    <ion-label position="stacked" style="font-weight: bold;">Nama Poli</ion-label>
                     <ion-input :value="formData.name" placeholder="Masukkan nama poli"
                         @ionInput="formData.name = $event.target.value"></ion-input>
                 </ion-item>
 
                 <ion-button expand="block" @click="handleSubmit">
-                    {{ isEditMode ? "Simpan Perubahan" : "Tambah Poli" }}
+                    {{ isEditMode ? "Update" : "Add" }}
                 </ion-button>
             </div>
         </ion-content>
@@ -24,9 +29,20 @@
 
 <script>
 import { getFirestore, doc, setDoc, collection, getDocs, getDoc } from "firebase/firestore";
+import { IonPage, IonHeader, IonToolbar, IonButtons, IonTitle, IonContent, IonButton } from "@ionic/vue";
+import { useRouter } from "vue-router";
 
 export default {
     name: "PoliForm",
+    components: {
+        IonPage,
+        IonHeader,
+        IonToolbar,
+        IonButtons,
+        IonTitle,
+        IonContent,
+        IonButton,
+    },
     data() {
         return {
             formData: {
@@ -38,6 +54,9 @@ export default {
         };
     },
     methods: {
+        goBack() {
+            this.$router.back();
+        },
         async fetchPoliData() {
             try {
                 const db = getFirestore();

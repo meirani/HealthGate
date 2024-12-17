@@ -2,22 +2,30 @@
     <ion-page>
         <ion-header>
             <ion-toolbar>
-                <ion-title>Kartu Antrean Saya</ion-title>
+                  <ion-buttons slot="start">
+          <a class="back-button" @click="goBack">
+            Back
+          </a >
+        </ion-buttons>
+                <ion-title>My Queue Card</ion-title>
             </ion-toolbar>
         </ion-header>
 
-        <ion-content class="ion-padding">
-            <div class="container">
-                <div v-if="loading" class="text-center text-gray-600">Memuat data...</div>
+        <ion-content class="ion-padding" style="--background: #e1eee9;">
+            
+                <div v-if="loading" style="">Memuat data...</div>
                 <div v-else>
-                    <div v-if="userAppointments.length === 0" class="text-center text-gray-600">
+                    <div v-if="userAppointments.length === 0" class="">
                         Tidak ada kartu antrean yang tersedia.
                     </div>
-                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <div>
+                        <h2 style="font-weight: bold; margin-top: 1px; ">Your Queue Cards is here!</h2>
+                    </div>
+                    <div class="cardss">
                         <div v-for="appointment in userAppointments" :key="appointment.id" class="card cursor-pointer"
                             @click="goToQueueCard(appointment)">
-                            <h2 class="hospital-name">{{ appointment.hospitalName }}</h2>
-                            <p class="patient-name">{{ appointment.name }}</p>
+                            <h2 class="hospital-name" >{{ appointment.hospitalName }}</h2>
+                            <p class="patient-name" style="font-weight: bold;">{{ appointment.name }}</p>
                             <p class="schedule-info">{{ appointment.schedule }}</p>
                             <p class="created-at text-sm text-blue-500">
                                 {{ formatRelativeTime(appointment.createdAt) }}
@@ -25,7 +33,12 @@
                         </div>
                     </div>
                 </div>
-            </div>
+                <div class="scroll-padding"></div>
+
+                <button v-if="isAdmin" @click="goToAddHospital" expand="block" class="add-button">
+                        <img class="icon-add" src="@/assets/add-icon.png"></img>
+                    </button>
+            
         </ion-content>
     </ion-page>
 </template>
@@ -35,9 +48,20 @@ import { getFirestore, collection, query, where, getDocs } from "firebase/firest
 import { getAuth } from "firebase/auth";
 import { formatDistanceToNow } from "date-fns";
 import { enUS } from "date-fns/locale";
+import { IonPage, IonHeader, IonToolbar, IonButtons, IonTitle, IonContent, IonButton } from "@ionic/vue";
+import { useRouter } from "vue-router";
 
 export default {
     name: "UserCard",
+    components: {
+        IonPage,
+        IonHeader,
+        IonToolbar,
+        IonButtons,
+        IonTitle,
+        IonContent,
+        IonButton,
+    },
     data() {
         return {
             userAppointments: [],
@@ -45,6 +69,9 @@ export default {
         };
     },
     methods: {
+        goBack() {
+            this.$router.back();
+        },
         async fetchUserAppointments() {
             try {
                 const db = getFirestore();
@@ -157,6 +184,10 @@ export default {
 
 
 <style scoped>
+.cardss {
+    margin-bottom: 10px;
+}
+
 .container {
     background: white;
     border-radius: 12px;
@@ -172,6 +203,7 @@ export default {
     padding: 15px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.3s, transform 0.2s;
+    margin-top: 20px;
 }
 
 .card:hover {

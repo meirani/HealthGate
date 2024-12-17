@@ -5,20 +5,14 @@
                 <ion-title>Profile</ion-title>
             </ion-toolbar>
         </ion-header>
-<<<<<<< Updated upstream
-
-        <ion-content class="profile-content">
-            <ion-card>
-=======
-        <ion-content >
+        <ion-content style="--background: #e1eee9">
             <ion-card class="container">
->>>>>>> Stashed changes
                 <div class="profile-header">
                     <h2 class="profile-title">Your Profile</h2>
                     <ion-avatar class="avatar">
-                        <img src="https://via.placeholder.com/150" alt="User Avatar">
+                        <img src="@/assets/prof-pict.png" alt="User Avatar">
                     </ion-avatar>
-                    <ion-button color="primary" v-if="!isEditing" @click="toggleEdit">Edit Profile</ion-button>
+                    <!-- <ion-button color="primary" v-if="!isEditing" @click="toggleEdit">Edit Profile</ion-button> -->
                 </div>
 
                 <div class="profile-info">
@@ -33,7 +27,6 @@
                             <span class="info-value">{{ email }}</span>
                         </ion-item>
                     </div>
-<<<<<<< Updated upstream
 
                     <!-- Edit Mode -->
                     <div v-if="isEditing">
@@ -57,15 +50,6 @@
                             <ion-input type="password" v-model="confirmPassword"
                                 placeholder="Konfirmasi password baru"></ion-input>
                         </ion-item>
-=======
-                    <div class="input-group">
-                        <ion-label >Nama Pengguna</ion-label>
-                        <ion-input v-model="username" class="profile-input" aria-disabled="false">windah</ion-input>
-                    </div>
-                    <div class="input-group">
-                        <ion-label >Email</ion-label>
-                        <ion-input v-model="email" class="profile-input" aria-disabled="false">windah@gmail.com</ion-input>
->>>>>>> Stashed changes
                     </div>
                 </div>
 
@@ -241,12 +225,6 @@ ion-card {
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-<<<<<<< Updated upstream
-.profile-header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-=======
 ion-label {
     text-align: left;
     font-size: 15px;
@@ -268,7 +246,6 @@ ion-label {
     text-align: center;
     margin-bottom: 16px;
 } */
->>>>>>> Stashed changes
 
 .avatar {
     margin: 10px auto;
@@ -280,15 +257,6 @@ ion-label {
     margin-bottom: 15px;
 }
 
-<<<<<<< Updated upstream
-.info-label {
-    font-weight: bold;
-    font-size: 14px;
-    color: #333;
-}
-
-.info-value {
-=======
 
 ion-input {
     
@@ -325,7 +293,6 @@ ion-input {
 
 .button-logout {
     height: 40px;
->>>>>>> Stashed changes
     font-size: 16px;
     color: #555;
 }
@@ -356,5 +323,13 @@ ion-card {
 .avatar-edit {
     flex-direction: column; 
     gap: 8px; }
+
+.profile-title {  
+    text-align: center; 
+    margin-bottom: 16px; 
+    font-size: 24px; 
+    color: #333; 
+    font-weight: bold; 
+}
 
 </style>

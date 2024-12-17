@@ -2,11 +2,16 @@
     <ion-page>
         <ion-header>
             <ion-toolbar>
-                <ion-title>{{ isEdit ? "Edit Jadwal Dokter" : "Tambah Jadwal Dokter" }}</ion-title>
+                  <ion-buttons slot="start">
+          <a class="back-button" @click="goBack">
+            Back
+          </a >
+        </ion-buttons>
+                <ion-title>{{ isEdit ? "Update Doctor Schedule" : "Add Doctor Schedule" }}</ion-title>
             </ion-toolbar>
         </ion-header>
 
-        <ion-content class="ion-padding">
+        <ion-content class="ion-padding" style="--background: #e1eee9;">
             <div class="container">
                 <ion-item>
                     <ion-label position="stacked">Nama Dokter</ion-label>
@@ -21,7 +26,7 @@
                 </ion-item>
 
                 <ion-button expand="block" @click="saveDoctorSchedule">
-                    {{ isEdit ? "Simpan Perubahan" : "Tambah Jadwal Dokter" }}
+                    {{ isEdit ? "Update" : "Add" }}
                 </ion-button>
             </div>
         </ion-content>
@@ -30,8 +35,19 @@
 
 <script>
 import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from "firebase/firestore";
+import { IonPage, IonHeader, IonToolbar, IonButtons, IonTitle, IonContent, IonButton } from "@ionic/vue";
+import { useRouter } from "vue-router";
 
 export default {
+     components: {
+        IonPage,
+        IonHeader,
+        IonToolbar,
+        IonButtons,
+        IonTitle,
+        IonContent,
+        IonButton,
+    },
     data() {
         return {
             schedule: { name: "", schedule: "" },
@@ -51,6 +67,9 @@ export default {
         }
     },
     methods: {
+        goBack() {
+            this.$router.back();
+        },
         async saveDoctorSchedule() {
             const db = getFirestore();
             const { hospitalId, poliId, doctorScheduleId } = this.$route.params;
