@@ -52,12 +52,47 @@
 
                 <ion-button expand="block" class="submit-button" type="submit">Buat Janji</ion-button>
             </form>
+
+              <!-- Ruang Scroll Tambahan -->
+                    <div class="scroll-padding"></div>
         </ion-content>
     </ion-page>
 </template>
 
 <script>
+import {
+    IonPage,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonBackButton,
+    IonTitle,
+    IonContent,
+    IonItem,
+    IonLabel,
+    IonInput,
+    IonTextarea,
+    IonButton,
+} from "@ionic/vue";
+import { getFirestore, doc, getDoc, collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { auth, db } from "@/firebase";
+
 export default {
+    name: "AppointmentPage",
+    components: {
+        IonPage,
+        IonHeader,
+        IonToolbar,
+        IonButtons,
+        IonBackButton,
+        IonTitle,
+        IonContent,
+        IonItem,
+        IonLabel,
+        IonInput,
+        IonTextarea,
+        IonButton,
+    },
     data() {
         return {
             hospitalName: "",
@@ -78,11 +113,102 @@ export default {
         goBack() {
             this.$router.back();
         },
-        submitAppointment() {
-            alert("Formulir berhasil dikirim!");
+        async fetchSelectedInfo() {
+            const { hospitalId, poliId, doctorScheduleId } = this.$route.params;
+
+            if (!hospitalId || !poliId || !doctorScheduleId) {
+                console.error("Missing parameters for fetching data.");
+                return;
+            }
+
+            try {
+                const hospitalDoc = await getDoc(doc(db, "hospitals", hospitalId));
+                this.hospitalName = hospitalDoc.exists() ? hospitalDoc.data().name : "Tidak Diketahui";
+
+                const poliDoc = await getDoc(doc(db, "hospitals", hospitalId, "polyclinics", poliId));
+                this.poliName = poliDoc.exists() ? poliDoc.data().name : "Tidak Diketahui";
+
+                const doctorScheduleDoc = await getDoc(
+                    doc(db, "hospitals", hospitalId, "polyclinics", poliId, "doctor_schedules", doctorScheduleId)
+                );
+
+                if (doctorScheduleDoc.exists()) {
+                    const data = doctorScheduleDoc.data();
+                    this.doctorName = data.name || "Tidak Diketahui"; // Gunakan field `name`
+                    this.doctorSchedule = data.schedule || "Tidak Diketahui"; // Gunakan field `schedule`
+                } else {
+                    console.warn("Doctor schedule document not found.");
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+
+            console.log(`Fetching doctor schedule from: hospitals/${hospitalId}/polyclinics/${poliId}/doctor_schedules/${doctorScheduleId}`);
+        },
+
+        async submitAppointment() {
+            const { hospitalId, poliId, doctorScheduleId } = this.$route.params;
+
+            if (!this.appointment.nik || !this.appointment.name || !this.appointment.phone) {
+                alert("Harap lengkapi semua data sebelum mengirimkan formulir.");
+                return;
+            }
+
+            try {
+                const username = await this.fetchUsername();
+                const userId = auth.currentUser ? auth.currentUser.uid : "Anonim";
+
+                const appointmentRef = collection(
+                    doc(db, "hospitals", hospitalId, "polyclinics", poliId, "doctor_schedules", doctorScheduleId),
+                    "appointments"
+                );
+
+                await addDoc(appointmentRef, {
+                    ...this.appointment,
+                    createdAt: serverTimestamp(),
+                    username,
+                    userId,
+                });
+
+                this.$router.push({
+                    name: "QueueCard",
+                    query: {
+                        nik: this.appointment.nik,
+                        name: this.appointment.name,
+                        hospitalName: this.hospitalName,
+                        poliName: this.poliName,
+                        doctorName: this.doctorName,
+                        schedule: this.doctorSchedule,
+                        createdAt: new Date().toISOString(),
+                        username,
+                    },
+                });
+            } catch (error) {
+                console.error("Error creating appointment:", error);
+                alert("Gagal membuat janji temu.");
+            }
+        },
+
+        async fetchUsername() {
+            const currentUser = auth.currentUser;
+
+            if (currentUser && currentUser.email) {
+                try {
+                    const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+                    return userDoc.exists() ? userDoc.data().username || "Anonim" : "Anonim";
+                } catch (error) {
+                    console.error("Error fetching username:", error);
+                }
+            }
+            return "Anonim";
         },
     },
+    mounted() {
+        this.fetchSelectedInfo();
+    },
 };
+    
+
 </script>
 
 <style scoped>
@@ -131,5 +257,9 @@ export default {
 
 .ion-padding {
     margin: 10px;
+}
+
+.scroll-padding {
+  height: 300px; /* Menambahkan ruang ekstra 500px di bawah konten */
 }
 </style>
